@@ -15,7 +15,6 @@ import { useRouter } from "vue-router";
 
 const saveCities = ref([]);
 
-console.log(saveCities);
 const getCities = async () => {
   if (localStorage.getItem("saveCities")) {
     saveCities.value = JSON.parse(localStorage.getItem("saveCities"));

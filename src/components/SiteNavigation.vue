@@ -6,7 +6,7 @@
       <RouterLink :to="{ name: 'home' }">
         <div class="flex items-center gap-3">
           <i class="fa-solid fa-sun text-2xl"></i>
-          <p class="text-2xl">The Local Weather</p>
+          <p class="text-2xl">{{ $t("title") }}</p>
         </div>
       </RouterLink>
 
@@ -20,6 +20,7 @@
           @click="addCity"
           v-if="route.query.preview"
         ></i>
+        <button v-if="isLoggedIn" @click="handleLogout">Logout</button>
       </div>
 
       <BaseModalVue :modalActive="modalActive" @close-modal="toggleModal">
@@ -59,13 +60,31 @@
 <script setup>
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import BaseModalVue from "./BaseModal.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { uid } from "uid";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
+const route = useRoute();
+const router = useRouter();
+// handle logout with firebase
+const isLoggedIn = ref(false);
+let auth;
+
+onMounted(() => {
+  auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    user ? (isLoggedIn.value = true) : (isLoggedIn.value = false);
+  });
+});
+
+const handleLogout = () => {
+  signOut(auth).then(() => {
+    router.push("/");
+  });
+};
 
 const modalActive = ref(null);
 const saveCities = ref([]);
-const route = useRoute();
-const router = useRouter();
 
 const addCity = () => {
   if (localStorage.getItem("saveCities")) {
