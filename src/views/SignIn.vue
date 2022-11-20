@@ -20,6 +20,8 @@
     <p v-if="errMsg" class="text-red-500">{{ errMsg }}</p>
     <p><button @click="signIn">Sign in</button></p>
 
+    <p><button @click="signInWithGoogle">Sign In with Google</button></p>
+
     <p>
       <button @click="handleRouteRegister">
         If you don't have account you can register account
@@ -30,7 +32,12 @@
 
 <script setup>
 import { ref } from "vue";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -63,6 +70,19 @@ const signIn = () => {
       }
     });
 };
+
+const signInWithGoogle = () => {
+  const provider = new GoogleAuthProvider();
+  signInWithPopup(getAuth(), provider)
+    .then((result) => {
+      console.log(result.user);
+      router.push("/home");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const handleRouteRegister = () => {
   router.push("/register");
 };
